@@ -6,9 +6,14 @@ const { resolve } = require('path')
 const engine = require('pug')
 
 function fastifyPug(fastify, opts, next) {
-  fastify.decorateReply('locals', {})
-  fastify.decorateReply('render', render)
-  fastify.decorateReply('view', render)
+  fastify.decorateReply('locals', null)
+  fastify.decorateReply('render', null)
+  fastify.decorateReply('view', null)
+  fastify.addHook('onRequest', async (_req, reply) => {
+    reply.locals = {}
+    reply.render = render
+    reply.view = render
+  })
 
   const cache = {}
   const templatesDir = resolve(opts.views)
@@ -66,7 +71,7 @@ function setContentTypeHeader(that) {
 }
 
 const metadata = {
-  fastify: '>=1.0.0',
+  fastify: '>=3.0.0',
   name: 'fastify-pug'
 }
 
